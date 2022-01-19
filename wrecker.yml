@@ -1,0 +1,28 @@
+box: node
+build:
+  steps:
+    - script:
+        name: echo nodejs information
+        code: |
+          echo "node version $(node -v) running"
+          echo "npm version $(npm -v) running"
+    - npm-install
+    - npm-test
+
+deploy:
+  openshift:
+    - add-ssh-key:
+        keyname: OPENSHIFT_SSH_KEY
+        host: $OPENSHIFT_HOST
+    - add-to-known_hosts:
+        hostname: $OPENSHIFT_HOST
+    - script:
+        name: git setup
+        code: |
+          git config --global user.email $EMAIL_ADDRESS
+          git config --global user.name $USER_NAME
+          git config --global push.default matching
+    - script:
+        name: deploy
+        code: |
+          git push $OPENSHIFT_GIT_URL $OPENSHIFT_BRANCH
