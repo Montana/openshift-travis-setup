@@ -119,21 +119,6 @@ oc set volumes dc/todo-app-flask-mongo \
 --mount-path=/opt/app-root/ui/ \
 -t configmap --configmap-name=ui-config
 
-oc policy add-role-to-user edit \
-system:serviceaccount:cicd:jenkins -n dev
-
-oc policy add-role-to-user edit \
-system:serviceaccount:cicd:jenkins -n test
-
-oc policy add-role-to-user edit \
-system:serviceaccount:cicd:jenkins -n prod
-
-oc new-project cicd --display-name="ToDo App - CI/CD with Jenkins"
-oc create -f \
-https://raw.githubusercontent.com/OpenShiftInAction/chapter6/master/jenkins-s2i/jenkins-s2i-template.json
-oc new-app --template="cicd/jenkins-oia"
-
-
 echo $(oc get dc todo-app-flask-mongo -o=jsonpath='{.spec.strategy.type}' -n dev)
 echo $(oc get dc mongodb -o=jsonpath='{.spec.strategy.type}' -n dev)
 
